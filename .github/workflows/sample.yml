@@ -14,11 +14,6 @@ jobs:
       - name: Log the parent container node version
         run: |
           node -v 
-      - name: Log the step container node version
-        uses: 'docker://node:12.14.1-alpine3.10'
-        with:
-          entrypoint: usr/local/bin/echo
-          args: '-v'
       - name: Step with docker to echo a string
         uses: 'docker://node:12.14.1-alpine3.10'
         with:
