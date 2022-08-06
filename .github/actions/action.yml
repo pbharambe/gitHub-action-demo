@@ -1,0 +1,36 @@
+
+name: "Publish to Docker"
+description: "Build a container image and Pushes it to Docker registry"
+
+inputs:
+  who-to-greet:  # id of input
+    description: 'Who to greet'
+    required: true
+    default: 'World'  
+
+runs:
+  using: "composite"
+  steps:
+  - name: Print
+    run: echo "In Action"
+    shell: bash
+    
+  - name: CF Add Repo
+    shell: bash
+    run: wget -q -O - https://packages.cloudfoundry.org/debian/cli.cloudfoundry.org.key | sudo apt-key add -
+        
+  - name: CF Add Repo Pt 2
+    shell: bash
+    run: echo "deb https://packages.cloudfoundry.org/debian stable main" | sudo tee /etc/apt/sources.list.d/cloudfoundry-cli.list
+
+  - name: CF Update Repo
+    shell: bash
+    run: sudo apt-get update
+
+  - name: CF Install
+    shell: bash
+    run: sudo apt-get install cf-cli
+    
+  - name: Check CF CLI version
+    shell: bash
+    run: cf --version
