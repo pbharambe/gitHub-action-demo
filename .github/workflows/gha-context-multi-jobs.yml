@@ -81,8 +81,8 @@ jobs:
           echo ${{github.run_number}}
           echo ${{github.run_id}}
           echo ${{github.retention_days}}
-          echo ${{ github.workflow }}-${{ github.ref }}-${{github.run_number}}
-          git diff --name-only ${{ github.event.before }} ${{ github.event.after }}
+          #echo ${{ github.workflow }}-${{ github.ref }}-${{github.run_number}}
+          #git diff --name-only ${{ github.event.before }} ${{ github.event.after }}
           echo ${{github.event.commits[0].message}}
           echo ${{ github.ref }}
           echo ${{ github.head_ref }}
