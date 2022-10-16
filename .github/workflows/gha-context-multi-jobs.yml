@@ -87,7 +87,7 @@ jobs:
           echo ${{ github.ref }}
           echo ${{ github.head_ref }}
           echo '-------------------'
-          echo ${{github.event.head_commit}}
+          echo ${{github.event.commits[0]}}
           echo '--------------------------------------'          
           env
       
