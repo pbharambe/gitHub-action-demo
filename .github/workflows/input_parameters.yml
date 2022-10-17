@@ -35,7 +35,12 @@ jobs:
     steps:
       - name: greet
         run: |
-          echo $(curl -Is https://www.google.co.in | grep HTTP/1.1 | awk {'print $2'})
+          status="$(curl -Is http://www.google.co.in | head -1)"
+          if [ ${validate[-2]} == "200" ]; then
+            echo "OK"
+          else
+            echo "NOT RESPONDING"
+          fi
           
 
   failed-run:
