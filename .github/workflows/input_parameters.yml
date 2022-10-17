@@ -35,7 +35,7 @@ jobs:
     steps:
       - name: greet
         run: |
-          $(curl -Is https://www.google.co.in | grep HTTP/1.1 | awk {'print $2'}) -eq 200
+          $(curl -Is https://www.google.co.in | grep HTTP/1.1 | awk {'print $2'})
           
 
   failed-run:
