@@ -28,3 +28,27 @@ jobs:
           echo "environment is ${{ github.event.inputs.environment }}"
           echo "boolean is ${{ github.event.inputs.boolean }}"
           echo "choice is ${{ github.event.inputs.choice }}"
+
+  failed:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: greet
+        run: | 
+          echo "failing on purpose"
+          exit 1
+
+  failed-run:
+    needs: failed
+    if: ${{ failure() }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: greet
+        run: | 
+          echo "environment is ${{ github.event.inputs.environment }}"
+          echo "boolean is ${{ github.event.inputs.boolean }}"
+          echo "choice is ${{ github.event.inputs.choice }}"
+  
