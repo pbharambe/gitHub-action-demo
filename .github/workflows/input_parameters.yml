@@ -34,10 +34,14 @@ jobs:
 
     steps:
       - name: greet
-        if: "contains(curl -IS https://google.com | grep HTTP | cut -d ' ' -f2, '200' ) "
-        run: | 
-          echo "failing on purpose"
-          exit 1
+        run: |
+          CODE="curl -IS https://config-server-devl.d1.cloudfoundry.deere.com/actuator/health | grep HTTP | cut -d ' ' -f2"
+          if [ $CODE != "200" ]
+          then 
+              echo "failing on purpose"
+          else
+              echo "no failing on purpose"
+
 
   failed-run:
     needs: failed
