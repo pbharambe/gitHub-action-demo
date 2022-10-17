@@ -37,10 +37,7 @@ jobs:
         run: |
           CODE=`curl -Is https://www.google.co.in | head -1`
           echo $CODE
-          validate1=( $status )
-          if [ "${validate1[-2]}" == "200" ]; then
-            echo "OK"
-          fi
+          
           status="$(curl -Is http://www.google.co.in | head -1)"
           validate=( $status )
           if [ "${validate[-2]}" == "200" ]; then
