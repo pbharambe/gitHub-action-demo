@@ -36,11 +36,7 @@ jobs:
       - name: greet
         run: |
           CODE=`curl -IS https://config-server-devl.d1.cloudfoundry.deere.com/actuator/health | grep HTTP | cut -d ' ' -f2`
-          if [ $CODE != "200" ]
-          then 
-              echo "failing on purpose"
-          else
-              echo "no failing on purpose"
+          echo $CODE
 
 
   failed-run:
