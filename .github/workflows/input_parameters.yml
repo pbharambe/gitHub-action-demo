@@ -35,7 +35,7 @@ jobs:
     steps:
       - name: greet
         run: |
-          status="$(curl -Is http://www.google.co.in | head -1)"
+          status="$('curl -Is http://www.google.co.in' | head -1)"
           validate=( $status )
           if [ "${validate[-2]}" == "200" ]; then
             echo "OK"
