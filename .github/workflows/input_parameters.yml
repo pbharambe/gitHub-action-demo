@@ -35,8 +35,11 @@ jobs:
     steps:
       - name: greet
         run: |
-          CODE=`curl -Is https://www.google.co.in | grep HTTP | cut -d ' ' -f2`
+          CODE=`curl -Is https://www.google.co.in | head -1`
           echo $CODE
+          if [ "${CODE[-2]}" == "200" ]; then
+            echo "OK"
+          fi
           status="$(curl -Is http://www.google.co.in | head -1)"
           validate=( $status )
           if [ "${validate[-2]}" == "200" ]; then
