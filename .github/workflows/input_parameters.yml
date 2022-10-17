@@ -37,7 +37,7 @@ jobs:
         run: |
           CODE=`curl -Is https://www.google.co.in | head -1`
           echo $CODE
-          if [ "$CODE" =! "200" ]; then
+          if [[ $CODE == *"200"* ]]; then
             echo "OKOK"
           fi
           
