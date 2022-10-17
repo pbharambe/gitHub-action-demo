@@ -37,7 +37,7 @@ jobs:
         run: |
           status="$(curl -Is http://www.google.co.inn | head -1)"
           validate=( $status )
-          if [ ${validate[-2]} == "200" ]; then
+          if [ ${status[-2]} == "200" ]; then
             echo "OK"
           else
             exit 1
