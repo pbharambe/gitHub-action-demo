@@ -35,9 +35,9 @@ jobs:
     steps:
       - name: greet
         run: |
-          CODE=`curl -IS https://www.google.co.in | grep HTTP | cut -d ' ' -f2`
+          CODE=`curl -Is https://www.google.co.in | grep HTTP | cut -d ' ' -f2`
           echo $CODE
-          if [ ${CODE} == "200" ]
+          if contains(${CODE}, "200")
           then
             exit 1
 
