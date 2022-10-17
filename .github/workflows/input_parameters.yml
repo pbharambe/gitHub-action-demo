@@ -37,7 +37,7 @@ jobs:
         run: |
           CODE=`curl -IS https://www.google.co.in | grep HTTP | cut -d ' ' -f2`
           echo $CODE
-          if "contains(curl -IS https://www.google.co.in | grep HTTP | cut -d ' ' -f2, '200' )"
+          if [ ${CODE} == "200" ]
           then
             exit 1
 
