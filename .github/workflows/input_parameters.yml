@@ -35,8 +35,10 @@ jobs:
     steps:
       - name: greet
         run: |
-          CODE=`curl -IS https://google.com | grep HTTP | cut -d ' ' -f2`
-          echo $CODE
+          CODE=`curl -IS https://google.co.in | grep HTTP | cut -d ' ' -f2`
+          if [ $CODE == "200" ]
+          then
+            exit 1
 
 
   failed-run:
