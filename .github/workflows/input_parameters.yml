@@ -29,6 +29,12 @@ jobs:
           echo "boolean is ${{ github.event.inputs.boolean }}"
           echo "choice is ${{ github.event.inputs.choice }}"
 
+  DependOnInput:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.inputs.boolean }}
+    steps:
+      - run: echo "True"
+
   failed:
     runs-on: ubuntu-latest
 
