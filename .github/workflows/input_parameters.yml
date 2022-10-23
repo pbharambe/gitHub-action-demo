@@ -31,9 +31,11 @@ jobs:
 
   DependOnInput:
     runs-on: ubuntu-latest
-    if: ${{ github.event.inputs.environment }} == "devl"
+    if: ${{ github.event.inputs.environment == 'devl' }} 
     steps:
-      - run: echo "True"
+      - run: | 
+          echo "environment is ${{ github.event.inputs.environment }}"
+          echo "True"
 
   failed:
     runs-on: ubuntu-latest
