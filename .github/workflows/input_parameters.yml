@@ -35,7 +35,7 @@ jobs:
     steps:
       - run: | 
           echo "environment is ${{ github.event.inputs.environment }} --" 
-          echo ${GITHUB_REF_NAME }
+          echo ${GITHUB_REF_NAME}
           echo "True"
 
   failed:
