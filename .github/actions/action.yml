@@ -13,7 +13,7 @@ runs:
   steps:
   - name: Print
     run: |
-      echo ls
+      ls
       echo "In Action"
     shell: bash
     
