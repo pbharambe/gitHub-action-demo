@@ -25,5 +25,4 @@ jobs:
         with:
           who-to-greet: |
             test
-            test
       
