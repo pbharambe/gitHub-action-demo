@@ -23,7 +23,7 @@ runs:
   - uses: actions/upload-artifact@v3
     with:
       name: my-artifact
-      path: ${{ inputs.upload-path }}  
+      path: [ ${{ inputs.upload-path }} ]
     
   - name: CF Add Repo
     shell: bash
