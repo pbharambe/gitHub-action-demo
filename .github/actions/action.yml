@@ -25,8 +25,8 @@ runs:
     with:
       name: my-artifact
       path: |
-        Dockerfile
-        README.md
+        /home/runner/work/gitHub-action-demo/gitHub-action-demo/Dockerfile
+        /home/runner/work/gitHub-action-demo/gitHub-action-demo/README.md
     
   - name: CF Add Repo
     shell: bash
