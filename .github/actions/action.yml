@@ -13,7 +13,7 @@ runs:
   steps:
   - name: Print
     run: |
-      echo ${{ inputs.who-to-greet }}
+      echo ls
       echo "In Action"
     shell: bash
     
