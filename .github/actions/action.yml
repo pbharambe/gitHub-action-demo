@@ -6,7 +6,11 @@ inputs:
   who-to-greet:  # id of input
     description: 'Who to greet'
     required: true
-    default: 'World'  
+    default: 'World'
+  upload-path:  # id of input
+    description: 'Who to greet'
+    required: true
+    type: string    
 
 runs:
   using: "composite"
@@ -19,7 +23,7 @@ runs:
   - uses: actions/upload-artifact@v3
     with:
       name: my-artifact
-      path: Dockerfile  
+      path: ${{ inputs.upload-path }}  
     
   - name: CF Add Repo
     shell: bash
