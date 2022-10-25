@@ -24,9 +24,9 @@ runs:
   - uses: actions/upload-artifact@v3
     with:
       name: my-artifact
-      path: |
-        /home/runner/work/gitHub-action-demo/gitHub-action-demo/Dockerfile
-        /home/runner/work/gitHub-action-demo/gitHub-action-demo/README.md
+      path: ${{ inputs.upload-path }}
+#        /home/runner/work/gitHub-action-demo/gitHub-action-demo/Dockerfile
+#        /home/runner/work/gitHub-action-demo/gitHub-action-demo/README.md
     
   - name: CF Add Repo
     shell: bash
