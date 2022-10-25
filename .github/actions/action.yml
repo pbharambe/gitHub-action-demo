@@ -12,7 +12,9 @@ runs:
   using: "composite"
   steps:
   - name: Print
-    run: echo "In Action"
+    run: |
+      echo ${{ inputs.who-to-greet }}
+      echo "In Action"
     shell: bash
     
   - name: CF Add Repo
