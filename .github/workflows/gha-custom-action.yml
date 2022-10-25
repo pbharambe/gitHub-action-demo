@@ -24,4 +24,5 @@ jobs:
         uses: ./.github/actions
         with:
           who-to-greet: test
+          upload-path: Dockerfile
       
