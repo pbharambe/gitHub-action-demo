@@ -48,6 +48,7 @@ jobs:
     steps:
       - name: greet
         run: |
+          echo ${GITHUB_REF_NAME}
           CODE=$(curl -Is https://www.google.co.in | head -1)
           echo $CODE
           if [[ "${CODE}" == *"200"* ]]; then
