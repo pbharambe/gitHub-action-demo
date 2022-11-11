@@ -18,6 +18,9 @@ on:
         - foo
         - bar
         - baz
+      octocatEyeColor:
+        description: 'Eye color of the Octocats'
+        required: true
 jobs:
   build:
     runs-on: ubuntu-latest
