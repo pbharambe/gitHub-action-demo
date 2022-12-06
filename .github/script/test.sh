@@ -1,3 +1,3 @@
 #!/bin/bash -l
 
-echo "Hello"
+echo "Hello" $1
