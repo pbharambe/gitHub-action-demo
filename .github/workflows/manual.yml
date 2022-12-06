@@ -27,6 +27,6 @@ jobs:
       - name: Run script file
         run: |
            chmod +x ./.github/script/test.sh
-           ./.github/script/test.sh
+           ./.github/script/test.sh 'Joy'
         shell: bash
     
