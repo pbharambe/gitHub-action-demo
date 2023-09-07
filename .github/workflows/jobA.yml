@@ -14,7 +14,7 @@ on:
 jobs:
   JobA_Reusable:
     name: jobA
-    runs-on: deere-ubuntu-latest
+    runs-on: ubuntu-latest
     if:  ${{ inputs.input1 == 'true' }} #&& always()
     steps:
       - name: Selected Inputs 
