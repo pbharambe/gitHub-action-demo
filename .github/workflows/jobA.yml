@@ -1,0 +1,23 @@
+name: jobA
+
+on:
+ workflow_call:
+  inputs:
+    InputName:
+        description: name input
+        required: true
+        type: string
+    input1:
+        description: JobA
+        required: true
+        type: string   
+jobs:
+  JobA_Reusable:
+    name: jobA
+    runs-on: deere-ubuntu-latest
+    if:  ${{ inputs.input1 == 'true' }} #&& always()
+    steps:
+      - name: Selected Inputs 
+        run: |
+         #echo "Job A Ran" 
+         #echo "Job A : ${{ github.event.inputs.InputName }}""      
