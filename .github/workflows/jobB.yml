@@ -15,7 +15,7 @@ jobs:
   JobB_Reusable:
     name: jobB
     if: github.event.inputs.input2 == 'true' #&& always()
-    runs-on: deere-ubuntu-latest
+    runs-on: ubuntu-latest
 
     steps:
       - name: Selected Inputs 
