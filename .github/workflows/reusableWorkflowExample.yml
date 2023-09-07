@@ -34,7 +34,7 @@ jobs:
         
   CallingJobA:
     
-    #if: github.event.inputs.input1 == 'true'
+    if: github.event.inputs.input1 == 'true'
     #needs: CheckBranchandInputs
     uses: pbharambe/gitHub-action-demo/.github/workflows/jobA.yml@main
     with:
@@ -43,7 +43,7 @@ jobs:
       
   CallingJobB:    
     
-    #if: github.event.inputs.input2 == 'true'
+    if: github.event.inputs.input2 == 'true'
     #needs: CallingJobA
     uses: pbharambe/gitHub-action-demo/.github/workflows/jobB.yml@main
     with:
