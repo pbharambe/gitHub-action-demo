@@ -22,7 +22,7 @@ on:
 jobs:
   CheckBranchandInputs:
     name: branch - ${{ github.ref_name }}
-    runs-on: deere-ubuntu-latest
+    runs-on: ubuntu-latest
     
     steps:
       - name: Selected Inputs
