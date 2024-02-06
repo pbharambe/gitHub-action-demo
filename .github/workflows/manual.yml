@@ -27,7 +27,7 @@ jobs:
       - name: Run script file
         run: |
           curl https://api.github.com/users/hadley/orgs | jq -r '.[0].login'
-          curl https://api.github.com/users/hadley/orgs | jq -r '.[].login' | startswith('gg')
+          #curl https://api.github.com/users/hadley/orgs | jq -r '.[].login' | startswith('gg')
 
   run_tests:
       runs-on: ubuntu-latest
