@@ -19,7 +19,7 @@ jobs:
         run: |
           my_var="Hello World"
           echo "Output [$my_var]"
-          echo "my_var=$my_var" >> $GITHUB_OUTPUT
+          echo "{my_var}={$my_var}" >> $GITHUB_OUTPUT
       - name: Log the parent container node version
         run: |
           node -v 
