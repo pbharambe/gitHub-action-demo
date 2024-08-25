@@ -8,7 +8,9 @@ on:
 
 jobs:
   node-docker:
-    runs-on: ubuntu-latest  
+    runs-on: ubuntu-latest
+    outputs:
+      my_var: ${{ steps.generate-secret.outputs.my_var }}
     container:
       image: 'node:14.15.0-alpine3.12'
     steps:
