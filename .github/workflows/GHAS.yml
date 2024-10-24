@@ -23,6 +23,6 @@ jobs:
 
       - name: Copy secrets to the destination
         env:
-          SECRET_1: ${{ secrets.GH_TOKEN }}
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
-          gh secret set SECRET_1 --repo ${{ github.event.input.destination_repo }} --body "SECRET_1"
+          gh secret set GH_TOKEN --repo ${{ github.event.input.destination_repo }} --body "GH_TOKEN"
