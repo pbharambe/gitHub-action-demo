@@ -25,4 +25,4 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
-          gh secret set GH_TOKEN --repo ${{ github.event.input.destination_repo }} --body "GH_TOKEN"
+          gh secret set GH_TOKEN --repo ${{ github.event.input.destination_repo }} --body "$GH_TOKEN"
