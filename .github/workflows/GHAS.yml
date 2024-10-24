@@ -2,6 +2,9 @@ name: Copy Secrets to Another Repo
 
 on:
   workflow_dispatch:
+    inputs:
+      destination_repo:
+        required: true
 
 jobs:
   copy-secrets:
