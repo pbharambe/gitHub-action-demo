@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       destination_repo:
-        required: true
+        required: false
 
 jobs:
   copy-secrets:
@@ -25,4 +25,4 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
-          gh secret set GH_TOKEN --repo ${{ github.event.input.destination_repo }} --body "$GH_TOKEN"
+          gh secret set GH_TOKEN --repo 'https://github.com/pbharambe/demo.git' --body "$GH_TOKEN"
