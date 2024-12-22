@@ -21,7 +21,7 @@ jobs:
       - name: Checkout repository code
         uses: actions/checkout@v4
       - name: Install dependancies
-        run: npm cli
+        run: npm ci
       - name: Connect to Postgres
         run: node client.js
         env:
