@@ -29,6 +29,16 @@ jobs:
           curl https://api.github.com/users/hadley/orgs | jq -r '.[0].login'
           #curl https://api.github.com/users/hadley/orgs | jq -r '.[].login' | startswith('gg')
 
+  test_debug_command:
+    runs-on: ubuntu-latest
+    steps:
+      - name: workflow commands logging messages
+        run: |
+          echo "::debug::This is a debug message"
+          echo "This is an info message"
+          echo "::error::This is an error message"
+          echo "::warning::This is a warning message"
+    
   run_tests:
       runs-on: ubuntu-latest
       steps:
