@@ -19,4 +19,13 @@ jobs:
       - name: Verify ActiveMQ is running
         run: |
           sleep 10  # Give it some time to start
-          curl -I http://localhost:8161
+          curl -I http://localhost:8161 >> result.txt
+
+      - name: Upload Test Results as Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: activemq-test-results
+          path: result.txt
+
+      - name: Save Test Output to Job Summary
+        run: cat result.txt >> $GITHUB_STEP_SUMMARY          
