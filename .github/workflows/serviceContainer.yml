@@ -22,7 +22,7 @@ jobs:
           curl -I http://localhost:8161 >> result.txt
 
       - name: Upload Test Results as Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: activemq-test-results
           path: result.txt
