@@ -31,4 +31,4 @@ jobs:
         run: echo "Secret String"
       - name: Output the value
         run: |
-          echo ${{ steps }}
+          echo ${{ steps.[7] }}
