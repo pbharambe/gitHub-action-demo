@@ -5,7 +5,6 @@ jobs:
   testing-wf-commands:
     runs-on: ubuntu-latest
     steps:
-      - id: workflow-commands
       - name: Setting an error message
         run: echo "::error::Missing semicolon"
       - name: Setting an error message with params
@@ -23,7 +22,13 @@ jobs:
           echo "::endgroup::"
       - name: Masking a value
         run: |
+          the_secret=$((RANDOM))
+          echo "::add-mask::$the_secret"
+          echo $the_secret
+          echo "secret-number=$the_secret" >> "$GITHUB_OUTPUT"
           echo "::add-mask::Secret String"
       - name: Echo a secret
         run: echo "Secret String"
-          
+      - name: Output the value
+        run: |
+          echo ${{ steps }}
