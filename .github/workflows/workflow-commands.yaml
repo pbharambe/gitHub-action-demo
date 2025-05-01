@@ -21,6 +21,7 @@ jobs:
           echo "Inside group"
           echo "::endgroup::"
       - name: Masking a value
+        id: value_mask
         run: |
           the_secret=$((RANDOM))
           echo "::add-mask::$the_secret"
@@ -31,4 +32,4 @@ jobs:
         run: echo "Secret String"
       - name: Output the value
         run: |
-          echo ${{ steps.7 }}
+          echo "the secret number is ${{ steps.value_mask.outputs.secret-number }}"
