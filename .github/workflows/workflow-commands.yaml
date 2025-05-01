@@ -28,10 +28,10 @@ jobs:
           echo $the_secret
           echo "secret-number=$the_secret" >> "$GITHUB_OUTPUT"
           echo "::add-mask::Secret String"
-      - name: Echo a secret
-        run: echo "Secret String"
-      - name: Output the value
-        run: |
-          echo ${{ steps }}
-          echo "the secret number is ${{ steps.workflow-commands.outputs.secret-number }}"
+      # - name: Echo a secret
+      #   run: echo "Secret String"
+      # - name: Output the value
+      #   run: |
+      #     echo ${{ steps }}
+      #     echo "the secret number is ${{ steps.workflow-commands.outputs.secret-number }}"
           
