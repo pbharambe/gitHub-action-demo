@@ -1,7 +1,7 @@
 name: Read property and JSON files
 
 on:
-  workflow_dispatch: # Manual trigger
+  workflow_dispatch:
 
 jobs:
   read-files:
@@ -13,24 +13,21 @@ jobs:
       - name: Read .properties file
         id: read_props
         run: |
-          echo "Reading properties file..."
           while IFS='=' read -r key value; do
-            # Skip empty lines or comments
             if [[ -n "$key" && ! "$key" =~ ^# ]]; then
-              echo "$key=$value"
-              echo "$key=$value" >> $GITHUB_OUTPUT
+              # Replace dots with underscores for valid output names
+              safe_key=$(echo "$key" | tr '.' '_' )
+              echo "${safe_key}=${value}" >> $GITHUB_OUTPUT
             fi
           done < config.properties
 
       - name: Read JSON file
         id: read_json
         run: |
-          echo "Reading JSON file..."
           my_value=$(jq -r '.someKey' config.json)
-          echo "my_value=$my_value" >> $GITHUB_OUTPUT
-          echo "$my_value"
-          
+          echo "my_value=${my_value}" >> $GITHUB_OUTPUT
+
       - name: Use the outputs
         run: |
-          echo "Property from props file: ${{ steps.read_props.outputs.someKey }}"
+          echo "Property from props file: ${{ steps.read_props.outputs.username }}"
           echo "Value from JSON file: ${{ steps.read_json.outputs.my_value }}"
