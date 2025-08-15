@@ -32,23 +32,29 @@ jobs:
             '    th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }' \
             '    th { background-color: #f4f4f4; }' \
             '    code { background: #f6f8fa; padding: 0.1rem 0.3rem; border-radius: 4px; }' \
+            '    .subtitle { color: #666; font-size: 0.9em; margin-top: -0.5rem; margin-bottom: 1rem; }' \
             '  </style>' \
             '</head>' \
             '<body>' \
             '  <h1>Combined Configuration Report</h1>' > "$OUT"
 
-          # Loop through each unit
-          jq -r '.[].unit' "$JSON_FILE" | while read -r UNIT; do
+          # Loop through each JSON entry (unit + code)
+          jq -c '.[]' "$JSON_FILE" | while read -r entry; do
+            UNIT=$(echo "$entry" | jq -r '.unit')
+            CODE=$(echo "$entry" | jq -r '.code')
             UNIT_LOWER=$(echo "$UNIT" | tr '[:upper:]' '[:lower:]')
             PROPS_FILE="${UNIT_LOWER}-values.properties"
 
             if [[ ! -f "$PROPS_FILE" ]]; then
-              echo "WARNING: No properties file for unit '$UNIT' (${PROPS_FILE}); skipping."
+              printf '  <h2>%s</h2>\n' "$UNIT" >> "$OUT"
+              printf '  <p class="subtitle">Code: %s</p>\n' "$CODE" >> "$OUT"
+              printf '  <p><em>No properties file found.</em></p>\n' >> "$OUT"
               continue
             fi
 
-            # Add section header for the unit
+            # Add section header for the unit + code
             printf '  <h2>%s</h2>\n' "$UNIT" >> "$OUT"
+            printf '  <p class="subtitle">Code: %s</p>\n' "$CODE" >> "$OUT"
             printf '  <table>\n    <thead><tr><th>Key</th><th>%s</th></tr></thead>\n    <tbody>\n' "$UNIT" >> "$OUT"
 
             # Append rows from properties file
