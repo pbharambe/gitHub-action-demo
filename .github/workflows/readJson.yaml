@@ -28,7 +28,7 @@ jobs:
           echo "Reading JSON file..."
           my_value=$(jq -r '.someKey' config.json)
           echo "my_value=$my_value" >> $GITHUB_OUTPUT
-          echo $my_value
+          echo "$my_value"
           
       - name: Use the outputs
         run: |
