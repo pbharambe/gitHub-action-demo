@@ -1,25 +1,35 @@
-name: Read JSON and Properties Files
+name: Read property and JSON files
 
 on:
-  push:
-    branches:
-      - main
+  workflow_dispatch: # Manual trigger
 
 jobs:
   read-files:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+      - name: Checkout repo
+        uses: actions/checkout@v4
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18'
+      - name: Read .properties file
+        id: read_props
+        run: |
+          echo "Reading properties file..."
+          while IFS='=' read -r key value; do
+            # Skip empty lines or comments
+            if [[ -n "$key" && ! "$key" =~ ^# ]]; then
+              echo "$key=$value"
+              echo "$key=$value" >> $GITHUB_OUTPUT
+            fi
+          done < config.properties
 
-      - name: Install dependencies
-        run: npm install properties-reader
+      - name: Read JSON file
+        id: read_json
+        run: |
+          echo "Reading JSON file..."
+          my_value=$(jq -r '.someKey' config.json)
+          echo "my_value=$my_value" >> $GITHUB_OUTPUT
 
-      - name: Read JSON and Properties files
-        run: node readFiles.js
+      - name: Use the outputs
+        run: |
+          echo "Property from props file: ${{ steps.read_props.outputs.someKey }}"
+          echo "Value from JSON file: ${{ steps.read_json.outputs.my_value }}"
