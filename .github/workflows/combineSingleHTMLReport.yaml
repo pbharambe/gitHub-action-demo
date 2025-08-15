@@ -1,4 +1,4 @@
-name: Build combined HTML from multiple units
+name: Build combined HTML from multiple units (only URL)
 
 on:
   workflow_dispatch:
@@ -10,7 +10,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Generate combined HTML report
+      - name: Generate combined HTML report (URL only)
         shell: bash
         run: |
           set -euo pipefail
@@ -24,7 +24,7 @@ jobs:
             '<html lang="en">' \
             '<head>' \
             '  <meta charset="utf-8" />' \
-            '  <title>Combined Configuration Report</title>' \
+            '  <title>Combined URL Report</title>' \
             '  <style>' \
             '    body { font-family: Arial, sans-serif; margin: 2rem; }' \
             '    h1 { margin-bottom: 1rem; }' \
@@ -32,11 +32,10 @@ jobs:
             '    th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }' \
             '    th { background-color: #f4f4f4; }' \
             '    code { background: #f6f8fa; padding: 0.1rem 0.3rem; border-radius: 4px; }' \
-            '    .subtitle { color: #666; font-size: 0.9em; margin-top: -0.5rem; margin-bottom: 1rem; }' \
             '  </style>' \
             '</head>' \
             '<body>' \
-            '  <h1>Combined Configuration Report</h1>' > "$OUT"
+            '  <h1>Combined URL Report</h1>' > "$OUT"
 
           # Loop through each JSON entry (unit + code)
           jq -c '.[]' "$JSON_FILE" | while read -r entry; do
@@ -47,31 +46,17 @@ jobs:
 
             if [[ ! -f "$PROPS_FILE" ]]; then
               printf '  <h2>%s</h2>\n' "$UNIT" >> "$OUT"
-              printf '  <p class="subtitle">Code: %s</p>\n' "$CODE" >> "$OUT"
               printf '  <p><em>No properties file found.</em></p>\n' >> "$OUT"
               continue
             fi
 
-            # Add section header for the unit + code
+            # Extract only URL key
+            URL_VALUE=$(grep -E '^app\.url=' "$PROPS_FILE" | cut -d'=' -f2- | xargs)
+
+            # Add section header with table
             printf '  <h2>%s</h2>\n' "$UNIT" >> "$OUT"
-            printf '  <p class="subtitle">Code: %s</p>\n' "$CODE" >> "$OUT"
-            printf '  <table>\n    <thead><tr><th>Key</th><th>%s</th></tr></thead>\n    <tbody>\n' "$UNIT" >> "$OUT"
-
-            # Append rows from properties file
-            while IFS= read -r line || [[ -n "$line" ]]; do
-              [[ -z "$line" || "$line" =~ ^[[:space:]]*# ]] && continue
-              key="${line%%=*}"
-              value="${line#*=}"
-              # Trim whitespace
-              key="${key#"${key%%[![:space:]]*}"}"; key="${key%"${key##*[![:space:]]}"}"
-              value="${value#"${value%%[![:space:]]*}"}"; value="${value%"${value##*[![:space:]]}"}"
-              [[ -z "$key" ]] && continue
-              # Escape HTML
-              k="${key//&/&amp;}"; k="${k//</&lt;}"; k="${k//>/&gt;}"
-              v="${value//&/&amp;}"; v="${v//</&lt;}"; v="${v//>/&gt;}"
-              printf '      <tr><td><code>%s</code></td><td>%s</td></tr>\n' "$k" "$v" >> "$OUT"
-            done < "$PROPS_FILE"
-
+            printf '  <table>\n    <thead><tr><th>URL</th></tr></thead>\n    <tbody>\n' >> "$OUT"
+            printf '      <tr><td>%s</td></tr>\n' "$URL_VALUE" >> "$OUT"
             printf '    </tbody>\n  </table>\n' >> "$OUT"
           done
 
