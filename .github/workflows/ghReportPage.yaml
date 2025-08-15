@@ -1,0 +1,84 @@
+name: Build HTML report and publish to GitHub Pages
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main  # change to your default branch if different
+
+jobs:
+  generate-and-publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write  # needed to push to gh-pages
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Generate Key-Value HTML report
+        shell: bash
+        run: |
+          set -euo pipefail
+          
+          JSON_FILE="sample.json"
+          OUT="index.html"
+
+          # Start HTML
+          printf '%s\n' \
+            '<!doctype html>' \
+            '<html lang="en">' \
+            '<head>' \
+            '  <meta charset="utf-8" />' \
+            '  <title>Configuration Report</title>' \
+            '  <style>' \
+            '    body { font-family: Arial, sans-serif; margin: 2rem; }' \
+            '    h1 { margin-bottom: 1rem; }' \
+            '    table { border-collapse: collapse; width: 50%; margin-bottom: 2rem; }' \
+            '    th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }' \
+            '    th { background-color: #f4f4f4; width: 30%; }' \
+            '    .na { color: red; font-weight: bold; }' \
+            '  </style>' \
+            '</head>' \
+            '<body>' \
+            '  <h1>Configuration Report</h1>' > "$OUT"
+
+          jq -c '.[]' "$JSON_FILE" | while read -r entry; do
+            UNIT=$(echo "$entry" | jq -r '.unit')
+            CODE=$(echo "$entry" | jq -r '.code')
+            UNIT_LOWER=$(echo "$UNIT" | tr '[:upper:]' '[:lower:]')
+            PROPS_FILE="${UNIT_LOWER}-values.properties"
+
+            URL_VALUE="N/A"
+            TIMEOUT_VALUE="N/A"
+
+            if [[ -f "$PROPS_FILE" ]]; then
+              URL_VALUE=$(grep -E 'url=' "$PROPS_FILE" | cut -d'=' -f2- | xargs || true)
+              TIMEOUT_VALUE=$(grep -E 'timeout=' "$PROPS_FILE" | cut -d'=' -f2- | xargs || true)
+              [[ -z "$URL_VALUE" ]] && URL_VALUE="N/A"
+              [[ -z "$TIMEOUT_VALUE" ]] && TIMEOUT_VALUE="N/A"
+            fi
+
+            printf '  <h2>%s</h2>\n' "$UNIT" >> "$OUT"
+            printf '  <table>\n' >> "$OUT"
+            printf '    <tr><th>Key</th><th>Value</th></tr>\n' >> "$OUT"
+            printf '    <tr><td>Code</td><td>%s</td></tr>\n' "$CODE" >> "$OUT"
+            [[ "$URL_VALUE" == "N/A" ]] && \
+              printf '    <tr><td>URL</td><td class="na">%s</td></tr>\n' "$URL_VALUE" >> "$OUT" || \
+              printf '    <tr><td>URL</td><td>%s</td></tr>\n' "$URL_VALUE" >> "$OUT"
+            [[ "$TIMEOUT_VALUE" == "N/A" ]] && \
+              printf '    <tr><td>Timeout</td><td class="na">%s</td></tr>\n' "$TIMEOUT_VALUE" >> "$OUT" || \
+              printf '    <tr><td>Timeout</td><td>%s</td></tr>\n' "$TIMEOUT_VALUE" >> "$OUT"
+            printf '  </table>\n' >> "$OUT"
+          done
+
+          printf '%s\n' \
+            '</body>' \
+            '</html>' >> "$OUT"
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: .
+          publish_branch: gh-pages
+          force_orphan: true
