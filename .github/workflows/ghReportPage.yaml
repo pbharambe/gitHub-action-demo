@@ -6,6 +6,16 @@ on:
     branches:
       - main  # change to your default branch if different
 
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+  
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
 jobs:
   generate-and-publish:
     runs-on: ubuntu-latest
@@ -76,6 +86,7 @@ jobs:
             '</html>' >> "$OUT"
 
       - name: Deploy to GitHub Pages
+        id: deployment        
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
