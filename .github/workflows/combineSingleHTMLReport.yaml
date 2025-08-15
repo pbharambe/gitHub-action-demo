@@ -1,4 +1,4 @@
-name: Build combined HTML from multiple units (only URL)
+name: Build combined HTML (Key-Value per unit)
 
 on:
   workflow_dispatch:
@@ -10,7 +10,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Generate combined HTML report (URL only)
+      - name: Generate combined Key-Value HTML report
         shell: bash
         run: |
           set -euo pipefail
@@ -18,49 +18,54 @@ jobs:
           JSON_FILE="sample.json"
           OUT="combined-config-report.html"
 
-          # Start HTML file
+          # Start HTML
           printf '%s\n' \
             '<!doctype html>' \
             '<html lang="en">' \
             '<head>' \
             '  <meta charset="utf-8" />' \
-            '  <title>Combined URL Report</title>' \
+            '  <title>Combined Configuration Report</title>' \
             '  <style>' \
             '    body { font-family: Arial, sans-serif; margin: 2rem; }' \
             '    h1 { margin-bottom: 1rem; }' \
-            '    table { border-collapse: collapse; width: 100%; margin-bottom: 2rem; }' \
+            '    table { border-collapse: collapse; width: 50%; margin-bottom: 2rem; }' \
             '    th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }' \
-            '    th { background-color: #f4f4f4; }' \
+            '    th { background-color: #f4f4f4; width: 30%; }' \
             '    code { background: #f6f8fa; padding: 0.1rem 0.3rem; border-radius: 4px; }' \
             '  </style>' \
             '</head>' \
             '<body>' \
-            '  <h1>Combined URL Report</h1>' > "$OUT"
+            '  <h1>Combined Configuration Report</h1>' > "$OUT"
 
-          # Loop through each JSON entry (unit + code)
+          # Loop through JSON
           jq -c '.[]' "$JSON_FILE" | while read -r entry; do
             UNIT=$(echo "$entry" | jq -r '.unit')
             CODE=$(echo "$entry" | jq -r '.code')
             UNIT_LOWER=$(echo "$UNIT" | tr '[:upper:]' '[:lower:]')
             PROPS_FILE="${UNIT_LOWER}-values.properties"
 
-            if [[ ! -f "$PROPS_FILE" ]]; then
-              printf '  <h2>%s</h2>\n' "$UNIT" >> "$OUT"
-              printf '  <p><em>No properties file found.</em></p>\n' >> "$OUT"
-              continue
+            URL_VALUE="N/A"
+            TIMEOUT_VALUE="N/A"
+
+            if [[ -f "$PROPS_FILE" ]]; then
+              URL_VALUE=$(grep -E '^ab\.url=' "$PROPS_FILE" | cut -d'=' -f2- | xargs)
+              TIMEOUT_VALUE=$(grep -E '^ab\.timeout=' "$PROPS_FILE" | cut -d'=' -f2- | xargs)
             fi
 
-            # Extract only URL key
-            URL_VALUE=$(grep -E '^app\.url=' "$PROPS_FILE" | cut -d'=' -f2- | xargs)
-
-            # Add section header with table
+            # Section header
             printf '  <h2>%s</h2>\n' "$UNIT" >> "$OUT"
-            printf '  <table>\n    <thead><tr><th>URL</th></tr></thead>\n    <tbody>\n' >> "$OUT"
-            printf '      <tr><td>%s</td></tr>\n' "$URL_VALUE" >> "$OUT"
-            printf '    </tbody>\n  </table>\n' >> "$OUT"
+
+            # Key–Value table
+            printf '  <table>\n' >> "$OUT"
+            printf '    <tr><th>Key</th><th>Value</th></tr>\n' >> "$OUT"
+            printf '    <tr><td>Code</td><td>%s</td></tr>\n' "$CODE" >> "$OUT"
+            printf '    <tr><td>URL</td><td>%s</td></tr>\n' "$URL_VALUE" >> "$OUT"
+            printf '    <tr><td>Timeout</td><td>%s</td></tr>\n' "$TIMEOUT_VALUE" >> "$OUT"
+            printf '  </table>\n' >> "$OUT"
+
           done
 
-          # End HTML
+          # Close HTML
           printf '%s\n' \
             '</body>' \
             '</html>' >> "$OUT"
