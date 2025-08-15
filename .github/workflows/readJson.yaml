@@ -17,6 +17,7 @@ jobs:
             if [[ -n "$key" && ! "$key" =~ ^# ]]; then
               # Replace dots with underscores for valid output names
               safe_key=$(echo "$key" | tr '.' '_' )
+              echo '${value}'
               echo "${safe_key}=${value}" >> $GITHUB_OUTPUT
             fi
           done < config.properties
