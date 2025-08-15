@@ -1,4 +1,4 @@
 {
-  "name": "Pankaj",
-  "role": "DGM - Software Engineering"
+  "someKey": "jsonValue",
+  "anotherKey": 42
 }
