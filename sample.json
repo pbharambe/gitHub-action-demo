@@ -1,11 +1,14 @@
 [
     {
-        "unit": "AB"
+        "unit": "AB",
+        "code": "A"
     },
     {
-        "unit": "CD"
+        "unit": "CD",
+        "code": "C"
     },
     {
-        "unit": "EF"
+        "unit": "EF",
+        "code": "E"
     }
 ]
