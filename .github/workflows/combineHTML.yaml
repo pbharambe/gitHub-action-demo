@@ -1,0 +1,111 @@
+name: Combine config into HTML
+
+on:
+  workflow_dispatch: {}
+
+jobs:
+  build-report:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Generate combined HTML
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          PROPS_FILE="config.properties"
+          JSON_FILE="config.json"
+          OUT="combined-config.html"
+
+          html_escape() {
+            local s="${1//&/&amp;}"
+            s="${s//</&lt;}"
+            s="${s//>/&gt;}"
+            s="${s//\"/&quot;}"
+            printf '%s' "$s"
+          }
+
+          # Collect key-value pairs into a temp file
+          TMP_ALL=$(mktemp)
+
+          # --- Read properties ---
+          if [[ -f "$PROPS_FILE" ]]; then
+            while IFS= read -r line || [[ -n "$line" ]]; do
+              [[ -z "$line" || "$line" =~ ^[[:space:]]*# ]] && continue
+              key="${line%%=*}"
+              value="${line#*=}"
+              key="${key#"${key%%[![:space:]]*}"}"; key="${key%"${key##*[![:space:]]}"}"
+              value="${value#"${value%%[![:space:]]*}"}"; value="${value%"${value##*[![:space:]]}"}"
+              [[ -z "$key" ]] && continue
+              echo -e "${key}\t${value}" >> "$TMP_ALL"
+            done < "$PROPS_FILE"
+          fi
+
+          # --- Read JSON ---
+          if [[ -f "$JSON_FILE" ]]; then
+            jq -r '
+              def path_to_string($p):
+                $p
+                | map(
+                    if type=="number" then "["+tostring+"]"
+                    else if test("^[A-Za-z0-9_]+$") then .
+                    else "\"" + gsub("\""; "\\\"") + "\""
+                    end end
+                  )
+                | reduce .[] as $x (""; . + (if ($x|test("^\\[")) then $x else (if .=="" then "" else "." end) + $x end));
+              paths(scalars) as $p
+              | [ path_to_string($p), (getpath($p)) ]
+              | @tsv
+            ' "$JSON_FILE" >> "$TMP_ALL"
+          fi
+
+          # --- Create HTML ---
+          cat > "$OUT" <<'HTML'
+          <!doctype html>
+          <html lang="en">
+          <head>
+            <meta charset="utf-8" />
+            <meta name="viewport" content="width=device-width, initial-scale=1" />
+            <title>Combined Config Report</title>
+            <style>
+              body { font-family: Arial, sans-serif; margin: 2rem; }
+              h1 { margin-bottom: 1rem; }
+              table { width: 100%; border-collapse: collapse; }
+              th, td { text-align: left; padding: 0.5rem; border-bottom: 1px solid #ddd; }
+              th { background-color: #f4f4f4; }
+              code { background: #f6f8fa; padding: 0.1rem 0.3rem; border-radius: 4px; }
+            </style>
+          </head>
+          <body>
+            <h1>Combined Configuration Data</h1>
+            <table>
+              <thead>
+                <tr><th>Key</th><th>Value</th></tr>
+              </thead>
+              <tbody>
+          HTML
+
+          while IFS=$'\t' read -r k v; do
+            ek=$(html_escape "$k")
+            ev=$(html_escape "$v")
+            printf '    <tr><td><code>%s</code></td><td>%s</td></tr>\n' "$ek" "$ev" >> "$OUT"
+          done < "$TMP_ALL"
+
+          cat >> "$OUT" <<'HTML'
+              </tbody>
+            </table>
+          </body>
+          </html>
+          HTML
+
+          echo "Generated $OUT"
+          ls -l "$OUT"
+
+      - name: Upload HTML report
+        uses: actions/upload-artifact@v4
+        with:
+          name: combined-config
+          path: combined-config.html
+          if-no-files-found: error
