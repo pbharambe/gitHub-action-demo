@@ -32,6 +32,7 @@ jobs:
             '    th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }' \
             '    th { background-color: #f4f4f4; width: 30%; }' \
             '    code { background: #f6f8fa; padding: 0.1rem 0.3rem; border-radius: 4px; }' \
+            '    .na { color: red; font-weight: bold; }' \
             '  </style>' \
             '</head>' \
             '<body>' \
@@ -48,8 +49,11 @@ jobs:
             TIMEOUT_VALUE="N/A"
 
             if [[ -f "$PROPS_FILE" ]]; then
-              URL_VALUE=$(grep -E '^ab\.url=' "$PROPS_FILE" | cut -d'=' -f2- | xargs)
-              TIMEOUT_VALUE=$(grep -E '^ab\.timeout=' "$PROPS_FILE" | cut -d'=' -f2- | xargs)
+              # Use grep safely: if not found, keep N/A
+              URL_VALUE=$(grep -E 'url=' "$PROPS_FILE" | cut -d'=' -f2- | xargs || true)
+              TIMEOUT_VALUE=$(grep -E 'timeout=' "$PROPS_FILE" | cut -d'=' -f2- | xargs || true)
+              [[ -z "$URL_VALUE" ]] && URL_VALUE="N/A"
+              [[ -z "$TIMEOUT_VALUE" ]] && TIMEOUT_VALUE="N/A"
             fi
 
             # Section header
@@ -59,8 +63,16 @@ jobs:
             printf '  <table>\n' >> "$OUT"
             printf '    <tr><th>Key</th><th>Value</th></tr>\n' >> "$OUT"
             printf '    <tr><td>Code</td><td>%s</td></tr>\n' "$CODE" >> "$OUT"
-            printf '    <tr><td>URL</td><td>%s</td></tr>\n' "$URL_VALUE" >> "$OUT"
-            printf '    <tr><td>Timeout</td><td>%s</td></tr>\n' "$TIMEOUT_VALUE" >> "$OUT"
+            if [[ "$URL_VALUE" == "N/A" ]]; then
+              printf '    <tr><td>URL</td><td class="na">%s</td></tr>\n' "$URL_VALUE" >> "$OUT"
+            else
+              printf '    <tr><td>URL</td><td>%s</td></tr>\n' "$URL_VALUE" >> "$OUT"
+            fi
+            if [[ "$TIMEOUT_VALUE" == "N/A" ]]; then
+              printf '    <tr><td>Timeout</td><td class="na">%s</td></tr>\n' "$TIMEOUT_VALUE" >> "$OUT"
+            else
+              printf '    <tr><td>Timeout</td><td>%s</td></tr>\n' "$TIMEOUT_VALUE" >> "$OUT"
+            fi
             printf '  </table>\n' >> "$OUT"
 
           done
