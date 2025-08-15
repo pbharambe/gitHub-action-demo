@@ -10,26 +10,20 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Read .properties file
-        id: read_props
+      - name: Read all .properties key-values
         run: |
+          echo "---- Properties file ----"
           while IFS='=' read -r key value; do
             if [[ -n "$key" && ! "$key" =~ ^# ]]; then
-              # Replace dots with underscores for valid output names
-              safe_key=$(echo "$key" | tr '.' '_' )
-              echo ${value}
-              echo "${safe_key}=${value}" >> $GITHUB_OUTPUT
+              echo "Key: $key | Value: $value"
             fi
           done < config.properties
 
-      - name: Read JSON file
-        id: read_json
+      - name: Read all JSON key-values
         run: |
-          my_value=$(jq -r '.someKey' config.json)
-          echo ${my_value}
-          echo "my_value=${my_value}" >> $GITHUB_OUTPUT
-
-      - name: Use the outputs
-        run: |
-          echo "Property from props file: ${{ steps.read_props.outputs.username }}"
-          echo "Value from JSON file: ${{ steps.read_json.outputs.my_value }}"
+          echo "---- JSON file ----"
+          # jq will print "key=value" lines for each field
+          jq -r 'to_entries[] | "\(.key)=\(.value)"' config.json |
+          while IFS='=' read -r key value; do
+            echo "Key: $key | Value: $value"
+          done
