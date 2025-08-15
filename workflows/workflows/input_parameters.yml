@@ -1,0 +1,86 @@
+name: Input Parameters
+
+on:
+  push:
+    branches: [ "main", "test" ]
+  workflow_dispatch:
+    inputs:
+      environment:
+        type: environment
+        description: Select the environment
+      boolean:
+        type: boolean
+        description: True or False
+      choice:
+        type: choice
+        description: Make a choice
+        options:
+        - foo
+        - bar
+        - baz
+      octocatEyeColor:
+        description: 'Eye color of the Octocats'
+        required: true
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    environment:
+      name: ${{ github.event.inputs.environment }}
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: greet
+        run: | 
+          echo "environment is ${{ github.event.inputs.environment }}"
+          echo "boolean is ${{ github.event.inputs.boolean }}"
+          echo "choice is ${{ github.event.inputs.choice }}"
+          echo ${BRANCH_NAME}
+
+  DependOnInput:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.inputs.boolean == 'true' }} 
+    steps:
+      - run: | 
+          echo "environment is ${{ github.event.inputs.environment }} --" 
+          echo ${GITHUB_REF_NAME}
+          echo ${{ github.head_ref }} ${{ github.ref }}
+          echo "True"
+
+  failed:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: greet
+        run: |
+          echo ${GITHUB_REF_NAME}
+          CODE=$(curl -Is https://www.google.co.in | head -1)
+          echo $CODE
+          if [[ "${CODE}" == *"200"* ]]; then
+            echo "OKOK"
+          fi
+          
+          
+          status="$(curl -Is http://www.google.co.in | head -1)"
+          validate=( $status )
+          if [ "${validate[-2]}" == "200" ]; then
+            echo "OK"
+          else
+            exit 1
+          fi
+          
+
+  failed-run:
+    needs: failed
+    if: ${{ failure() }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: greet
+        run: | 
+          echo "environment is ${{ github.event.inputs.environment }}"
+          echo "boolean is ${{ github.event.inputs.boolean }}"
+          echo "choice is ${{ github.event.inputs.choice }}"
+  

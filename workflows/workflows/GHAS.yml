@@ -1,0 +1,28 @@
+name: Copy Secrets to Another Repo
+
+on:
+  workflow_dispatch:
+    inputs:
+      destination_repo:
+        required: false
+
+jobs:
+  copy-secrets:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source repo
+        uses: actions/checkout@v3
+
+      - name: Install GitHub CLI
+        run: |
+          sudo apt-get install -y gh
+
+      - name: Authenticate GitHub CLI
+        run: |
+          echo "${{ secrets.GH_TOKEN }}" | gh auth login --with-token
+
+      - name: Copy secrets to the destination
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: |
+          gh secret set GH_TOKEN --repo 'https://github.com/pbharambe/demo.git' --body "$GH_TOKEN"
