@@ -30,7 +30,7 @@ jobs:
         run: |
           set -euo pipefail
           
-          JSON_FILE="/manifest/sample.json"
+          JSON_FILE="manifest/sample.json"
           OUT="index.html"
 
           # Start HTML
