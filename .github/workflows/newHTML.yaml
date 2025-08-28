@@ -14,7 +14,7 @@ jobs:
         run: |
           set -euo pipefail
           
-          JSON_FILE="sample.json"
+          JSON_FILE="manifest/sample.json"
           OUT="config-report.html"
 
           # Read unit from JSON (convert to lowercase for file naming)
