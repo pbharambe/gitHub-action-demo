@@ -1,4 +1,4 @@
-name: Read property and JSON files
+name: Matrix Test
 
 on:
   workflow_dispatch:
