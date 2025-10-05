@@ -13,4 +13,4 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
-      - run: echo 'colo - ${{ matrix.color }} & animal - ${{ matrix.animal }}
+      - run: echo 'colo - ${{ matrix.color }} & animal - ${{ matrix.animal }}'
