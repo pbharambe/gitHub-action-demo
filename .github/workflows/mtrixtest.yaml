@@ -1,0 +1,16 @@
+name: Read property and JSON files
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test-matrix:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        color: [blue, pink]
+        animal: [owl, magpie]
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+      - run: echo 'colo - ${{ matrix.color }} & animal - ${{ matrix.animal }}
