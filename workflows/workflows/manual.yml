@@ -1,0 +1,51 @@
+# This is a basic workflow that is manually triggered
+
+name: Manual workflow
+
+# Controls when the action will run. Workflow runs when manually triggered using the UI
+# or API.
+on:
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "greet"
+  greet:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+    # Runs a single command using the runners shell
+    - name: Send greeting
+      run: echo "Hello ${{ github.event.inputs.name }}"
+
+  test_url:
+      runs-on: ubuntu-latest
+      steps:
+      - uses: actions/checkout@v2
+      - name: Run script file
+        run: |
+          curl https://api.github.com/users/hadley/orgs | jq -r '.[0].login'
+          #curl https://api.github.com/users/hadley/orgs | jq -r '.[].login' | startswith('gg')
+
+  test_debug_command:
+    runs-on: ubuntu-latest
+    steps:
+      - name: workflow commands logging messages
+        run: |
+          echo "::debug::This is a debug message"
+          echo "This is an info message"
+          echo "::error::This is an error message"
+          echo "::warning::This is a warning message"
+    
+  run_tests:
+      runs-on: ubuntu-latest
+      steps:
+      - uses: actions/checkout@v2
+      - name: Run script file
+        run: |
+           chmod +x ./.github/script/test.sh
+           ./.github/script/test.sh 'Joy'
+        shell: bash
+  

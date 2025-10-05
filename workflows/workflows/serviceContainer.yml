@@ -1,0 +1,31 @@
+name: ActiveMQ Service CI
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      activemq:
+        image: rmohr/activemq:latest
+        ports:
+          - 61616:61616  # Open ActiveMQ broker port
+          - 8161:8161    # Web Console
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Verify ActiveMQ is running
+        run: |
+          sleep 10  # Give it some time to start
+          curl -I http://localhost:8161 >> result.txt
+
+      - name: Upload Test Results as Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: activemq-test-results
+          path: result.txt
+
+      - name: Save Test Output to Job Summary
+        run: cat result.txt >> $GITHUB_STEP_SUMMARY
