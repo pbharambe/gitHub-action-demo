@@ -8,8 +8,13 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        color: [blue, pink]
+        color: [green, pink]
         animal: [owl, magpie]
+        include:
+          - color: blue
+            animal: owl
+          - color: pink
+            animal: magpie
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
